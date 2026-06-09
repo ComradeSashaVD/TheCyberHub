@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
 import dynamic from 'next/dynamic';
+import { GamificationTab } from '@/components/profile/GamificationTab';
 
 const ProfileChart = dynamic(() => import('@/components/charts/ProfileChart'), { ssr: false });
 const ActivityHeatmap = dynamic(() => import('@/components/charts/ActivityHeatmap'), { ssr: false });
@@ -46,10 +47,11 @@ import {
 } from 'lucide-react';
 import { API_URL, fetchApi, tokenStore } from '@/lib/api';
 import { profileSchema } from '@/lib/validations';
+
 const ProfilePage = () => {
     const router = useRouter();
     const { user, loading, logout, updateProfile, updatePassword, requestVerification } = useAuth();
-    const [activeTab, setActiveTab] = useState<'stats' | 'profile' | 'security' | 'privacy'>('stats');
+    const [activeTab, setActiveTab] = useState<'stats' | 'profile' | 'security' | 'privacy' | 'gamification'>('stats');
     const avatarInputRef = useRef<HTMLInputElement>(null);
 
     // Profile extended fields
@@ -643,6 +645,16 @@ const ProfilePage = () => {
                         >
                             <Eye className="w-4 h-4" />
                             Privacy
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('gamification')}
+                            className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors whitespace-nowrap ${activeTab === 'gamification'
+                                ? 'border-orange-500 text-white'
+                                : 'border-transparent text-gray-400 hover:text-white'
+                                }`}
+                        >
+                            <Award className="w-4 h-4" />
+                            Gamification
                         </button>
                     </div>
 
@@ -1430,6 +1442,11 @@ const ProfilePage = () => {
                                 </div>
                             </div>
                         </div>
+                    )}
+
+                    {/* Gamification Tab */}
+                    {activeTab === 'gamification' && (
+                        <GamificationTab userId={user.id} />
                     )}
                 </div>
             </div>
